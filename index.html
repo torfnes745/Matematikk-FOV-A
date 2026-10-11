@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator for Areal og Omkrets</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            text-align: center;
+            color: #0f172a;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        select:focus, input:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: -1px;
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .results {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--bg);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .result-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Areal & Omkrets</h1>
+    
+    <!-- Valg av figur -->
+    <div class="form-group">
+        <label for="shape">Velg geometrisk figur:</label>
+        <select id="shape" onchange="updateInputs()">
+            <option value="rectangle">Rektangel</option>
+            <option value="square">Kvadrat</option>
+            <option value="circle">Sirkel</option>
+        </select>
+    </div>
+
+    <!-- Input-felter (skifter basert på figur) -->
+    <div id="input-length" class="form-group">
+        <label id="label-length" for="length">Lengde (cm):</label>
+        <input type="number" id="length" min="0" step="any" placeholder="Tast inn lengde">
+    </div>
+
+    <div id="input-width" class="form-group">
+        <label for="width">Bredde (cm):</label>
+        <input type="number" id="width" min="0" step="any" placeholder="Tast inn bredde">
+    </div>
+
+    <button onclick="calculate()">Regn ut</button>
+
+    <!-- Visning av resultat -->
+    <div class="results">
+        <div class="result-item">
+            <span>Areal:</span>
+            <span id="res-area" class="result-value">0 cm²</span>
+        </div>
+        <div class="result-item">
+            <span>Omkrets:</span>
+            <span id="res-perimeter" class="result-value">0 cm</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateInputs() {
+        const shape = document.getElementById('shape').value;
+        const lengthGroup = document.getElementById('input-length');
+        const widthGroup = document.getElementById('input-width');
+        const labelLength = document.getElementById('label-length');
+        
+        // Nullstill inputverdier ved bytte av figur
+        document.getElementById('length').value = '';
+        document.getElementById('width').value = '';
+
+        if (shape === 'rectangle') {
+            lengthGroup.classList.remove('hidden');
+            widthGroup.classList.remove('hidden');
+            labelLength.textContent = 'Lengde (cm):';
+        } else if (shape === 'square') {
+            lengthGroup.classList.remove('hidden');
+            widthGroup.classList.add('hidden');
+            labelLength.textContent = 'Sidekant (cm):';
+        } else if (shape === 'circle') {
+            lengthGroup.classList.remove('hidden');
+            widthGroup.classList.add('hidden');
+            labelLength.textContent = 'Radius (cm):';
+        }
+    }
+
+    function calculate() {
+        const shape = document.getElementById('shape').value;
+        const val1 = parseFloat(document.getElementById('length').value);
+        const val2 = parseFloat(document.getElementById('width').value);
+        
+        let area = 0;
+        let perimeter = 0;
+
+        if (isNaN(val1) && shape !== '') {
+            alert('Vennligst fyll inn nødvendige tallfellt.');
+            return;
+        }
+
+        if (shape === 'rectangle') {
+            if (isNaN(val2)) {
+                alert('Vennligst fyll inn bredde for rektangelet.');
+                return;
+            }
+            area = val1 * val2;
+            perimeter = 2 * (val1 + val2);
+        } else if (shape === 'square') {
+            area = val1 * val1;
+            perimeter = 4 * val1;
+        } else if (shape === 'circle') {
+            area = Math.PI * Math.pow(val1, 2);
+            perimeter = 2 * Math.PI * val1;
+        }
+
+        // Vis resultater avrundet til 2 desimaler
+        document.getElementById('res-area').textContent = area.toFixed(2) + ' cm²';
+        document.getElementById('res-perimeter').textContent = perimeter.toFixed(2) + ' cm';
+    }
+
+    // Kjør funksjonen én gang ved oppstart for riktig visning
+    updateInputs();
+</script>
+
+</body>
+</html>
