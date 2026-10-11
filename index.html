@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matematikkoppgaver</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 40px;
+        background-color: #f4f4f4;
+    }
+    .oppgave {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 500px;
+        margin: auto;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    canvas {
+        border: 1px solid black;
+        margin: 20px;
+    }
+    input {
+        padding: 8px;
+        font-size: 16px;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin: 5px;
+    }
+</style>
+</head>
+<body>
+
+<h1>Interaktive matteoppgaver</h1>
+
+<div class="oppgave">
+    <canvas id="figur" width="300" height="200"></canvas>
+
+    <p id="tekst"></p>
+
+    <input type="number" id="svar" placeholder="Skriv svar">
+    <br><br>
+
+    <button onclick="sjekkSvar()">Sjekk svar</button>
+    <button onclick="nyOppgave()">Ny oppgave</button>
+
+    <p id="resultat"></p>
+</div>
+
+<script>
+let riktigSvar = 0;
+let type = "";
+
+function nyOppgave() {
+    const canvas = document.getElementById("figur");
+    const ctx = canvas.getContext("2d");
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let bredde = Math.floor(Math.random() * 10) + 3;
+    let høyde = Math.floor(Math.random() * 10) + 3;
+
+    ctx.strokeRect(50, 30, bredde * 15, høyde * 15);
+
+    ctx.font = "16px Arial";
+    ctx.fillText(bredde + " m", 50 + (bredde * 15) / 2 - 10, 25);
+    ctx.fillText(høyde + " m", 20, 30 + (høyde * 15) / 2);
+
+    if (Math.random() < 0.5) {
+        type = "areal";
+        riktigSvar = bredde * høyde;
+        document.getElementById("tekst").innerHTML =
+            `Hva er arealet til rektangelet?`;
+    } else {
+        type = "omkrets";
+        riktigSvar = 2 * (bredde + høyde);
+        document.getElementById("tekst").innerHTML =
+            `Hva er omkretsen til rektangelet?`;
+    }
+
+    document.getElementById("resultat").innerHTML = "";
+    document.getElementById("svar").value = "";
+}
+
+function sjekkSvar() {
+    const svar = Number(document.getElementById("svar").value);
+
+    if (svar === riktigSvar) {
+        document.getElementById("resultat").innerHTML =
+            "✅ Riktig!";
+    } else {
+        document.getElementById("resultat").innerHTML =
+            "❌ Feil. Riktig svar er " + riktigSvar;
+    }
+}
+
+nyOppgave();
+</script>
+
+</body>
+</html>
